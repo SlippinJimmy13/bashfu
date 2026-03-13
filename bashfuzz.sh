@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 T=$1
-launch() { xfce4-terminal --title "$1" --command "bash -c '$2; read'" & }
+export XDG_RUNTIME_DIR=/tmp/runtime-root
+launch() { qterminal --title "$1" -e "bash -c '$2; read'" & }
  
-launch "feroxbuster" "feroxbuster --url $T --wordlist /usr/share/seclists/Discovery/Web-Content/common.txt"
-launch "gobuster"    "gobuster dir --url $T --wordlist /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt"
-launch "ffuf"        "ffuf -u $T/FUZZ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt"
-launch "dirb"        "dirb $T /usr/share/wordlists/rockyou.txt"
- 
+launch "feroxbuster" "feroxbuster --url $T --wordlist /home/kali/seclists/Discovery/Web-Content/common.txt --filter-status 502,503,429"
+launch "gobuster"    "gobuster dir --url $T --wordlist /home/kali/seclists/Discovery/Web-Content/raft-medium-directories.txt -b 404,502,503,429"
+launch "ffuf"        "ffuf -u $T/FUZZ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -mc 200,301,302,403 -fc 502,503,429 -s"
